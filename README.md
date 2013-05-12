@@ -1,7 +1,7 @@
 CwsOvhLogsDownloader
 ====================
 
-CwsOvhLogsDownloader is a PHP class to to download the Apache access and error, FTP, CGI, Out and SSH logs available on http://logs.ovh.net from a shared hosting.
+CwsOvhLogsDownloader is a PHP class to download the Apache access and error, FTP, CGI, Out and SSH logs available on http://logs.ovh.net from a shared hosting.
 
 Installation
 ------------
