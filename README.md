@@ -32,3 +32,8 @@ Public methods :
 * **getByDate** - Retrieve logs by date.
 * **getByType** - Retrieve logs by type.
 * **getAll** - Retrieve all logs.
+
+More infos
+----------
+
+http://www.crazyws.fr/dev/classes-php/cwsovhlogsdownloader-pour-telecharger-les-logs-ovh-JPZQ1.html
