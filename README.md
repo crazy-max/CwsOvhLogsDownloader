@@ -10,6 +10,8 @@ Installation
 * Copy the ``class.cws.ovhld.php`` file in a folder on your server.
 * Go to ``index.php`` to see an example.
 
+![](http://static.crazyws.fr/resources/blog/2013/05/ovh-logs-downloader-php.png)
+
 Options
 -------
 
