@@ -2,6 +2,9 @@
 
 include('class.cws.ovhld.php');
 
+// Download CwsCurl at https://github.com/crazy-max/CwsCurl
+include('class.cws.curl.php');
+
 $cwsOvhLogsDownloader = new CwsOvhLogsDownloader();
 $cwsOvhLogsDownloader->debug_verbose    = CWSOVHLD_VERBOSE_DEBUG;  // default : CWSOVHLD_VERBOSE_SIMPLE
 $cwsOvhLogsDownloader->nic              = "";                      // The OVH NIC-handle (e.g. AB1234-OVH)

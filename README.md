@@ -7,6 +7,7 @@ Installation
 ------------
 
 * Enable the [php_curl](http://php.net/manual/en/book.curl.php) extension.
+* Download and copy the [CwsCurl](https://github.com/crazy-max/CwsCurl) wrapper PHP class.
 * Copy the ``class.cws.ovhld.php`` file in a folder on your server.
 * Go to ``index.php`` to see an example.
 

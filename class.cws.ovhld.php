@@ -388,40 +388,36 @@ class CwsOvhLogsDownloader
     }
     
     /**
-     * Download a url's content using cURL.
+     * Download a url's content using CwsCurl wrapper class.
+     * This class can be downloaded at https://github.com/crazy-max/CwsCurl
      * @param string $params
      * @return string
      */
     private function getContent($params='')
     {
         $this->output('<h3>getContent</h3>', CWSOVHLD_VERBOSE_DEBUG, false);
-        $retry = 3;
-        $content = false;
-        $time = $this->getMicrotime();
         
         $url = $this->_url . '/' . $params;
         $this->output('<strong>Url : </strong>' . $url, CWSOVHLD_VERBOSE_DEBUG);
         
-        $curl = curl_init($url);
-        if (is_resource($curl) === true) {
-            curl_setopt($curl, CURLOPT_FAILONERROR, true);
-            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curl, CURLOPT_USERPWD, $this->nic . ":" . $this->password);
-            
-            while (($content === false) && (--$retry > 0)) {
-                $content = curl_exec($curl);
-            }
-            
-            curl_close($curl);
-        }
+        $time = $this->getMicrotime();
         
-        $this->output('<strong>Size : </strong>' . $this->formatSize(strlen($content)), CWSOVHLD_VERBOSE_DEBUG);
+        $cwsCurl = new CwsCurl();
+        $cwsCurl->setDebugVerbose(CWSCURL_VERBOSE_QUIET);
+        $cwsCurl->setUrl($url);
+        $cwsCurl->setAuth($this->nic, $this->password);
+        $cwsCurl->process();
+        
+        $this->output('<strong>Size : </strong>' . $this->formatSize(strlen($cwsCurl->getContent())), CWSOVHLD_VERBOSE_DEBUG);
         $this->output('<strong>Time : </strong>' . round($this->getMicrotime() - $time, 3) . ' seconds', CWSOVHLD_VERBOSE_DEBUG);
         
-        return $content;
+        if ($cwsCurl->getErrorMsg()) {
+            $this->error_msg = $cwsCurl->getErrorMsg();
+            $this->output();
+            return false;
+        }
+        
+        return $cwsCurl->getContent();
     }
     
     /**
