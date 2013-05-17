@@ -24,7 +24,7 @@
  * @author Cr@zy
  * @copyright 2013, Cr@zy
  * @license GPL licensed
- * @version 1.0
+ * @version 1.1
  * @link https://github.com/crazy-max/CwsOvhLogsDownloader
  *
  */
@@ -47,7 +47,7 @@ class CwsOvhLogsDownloader
      * CwsOvhLogsDownloader version.
      * @var string
      */
-    public $version = "1.0";
+    public $version = "1.1";
     
     /**
      * The OVH NIC-handle. (e.g. AB1234-OVH)
