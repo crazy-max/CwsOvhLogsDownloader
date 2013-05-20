@@ -24,7 +24,7 @@
  * @author Cr@zy
  * @copyright 2013, Cr@zy
  * @license GPL licensed
- * @version 1.1
+ * @version 1.2
  * @link https://github.com/crazy-max/CwsOvhLogsDownloader
  *
  */
@@ -47,7 +47,7 @@ class CwsOvhLogsDownloader
      * CwsOvhLogsDownloader version.
      * @var string
      */
-    public $version = "1.1";
+    public $version = "1.2";
     
     /**
      * The OVH NIC-handle. (e.g. AB1234-OVH)
@@ -97,10 +97,10 @@ class CwsOvhLogsDownloader
     
     /**
      * Control the debug output.
-     * default CWSOVHLD_VERBOSE_SIMPLE
+     * default CWSOVHLD_VERBOSE_QUIET
      * @var int
      */
-    public $debug_verbose = CWSOVHLD_VERBOSE_SIMPLE;
+    public $debug_verbose = CWSOVHLD_VERBOSE_QUIET;
     
     /**
      * The OVH logs url.
@@ -403,7 +403,6 @@ class CwsOvhLogsDownloader
         $time = $this->getMicrotime();
         
         $cwsCurl = new CwsCurl();
-        $cwsCurl->setDebugVerbose(CWSCURL_VERBOSE_QUIET);
         $cwsCurl->setUrl($url);
         $cwsCurl->setAuth($this->nic, $this->password);
         $cwsCurl->process();

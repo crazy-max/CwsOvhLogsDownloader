@@ -6,7 +6,7 @@ include('class.cws.ovhld.php');
 include('class.cws.curl.php');
 
 $cwsOvhLogsDownloader = new CwsOvhLogsDownloader();
-$cwsOvhLogsDownloader->debug_verbose    = CWSOVHLD_VERBOSE_DEBUG;  // default : CWSOVHLD_VERBOSE_SIMPLE
+$cwsOvhLogsDownloader->debug_verbose    = CWSOVHLD_VERBOSE_DEBUG;  // default : CWSOVHLD_VERBOSE_QUIET
 $cwsOvhLogsDownloader->nic              = "";                      // The OVH NIC-handle (e.g. AB1234-OVH)
 $cwsOvhLogsDownloader->password         = "";                      // The OVH NIC-handle password
 $cwsOvhLogsDownloader->domain           = "";                      // Your OVH domain (e.g. crazyws.fr)
