@@ -1,10 +1,8 @@
-CwsOvhLogsDownloader
-====================
+# CwsOvhLogsDownloader
 
 CwsOvhLogsDownloader is a PHP class to download the Apache access and error, FTP, CGI, Out and SSH logs available on http://logs.ovh.net from a shared hosting.
 
-Installation
-------------
+## Installation
 
 * Enable the [php_curl](http://php.net/manual/en/book.curl.php) extension.
 * Download and copy the [CwsCurl](https://github.com/crazy-max/CwsCurl) wrapper PHP class.
@@ -13,8 +11,7 @@ Installation
 
 ![](http://static.crazyws.fr/resources/blog/2013/05/ovh-logs-downloader-php.png)
 
-Options
--------
+## Options
 
 Public vars :
 
@@ -34,7 +31,10 @@ Public methods :
 * **getByType** - Retrieve logs by type.
 * **getAll** - Retrieve all logs.
 
-More infos
-----------
+## License
+
+LGPL. See ``LICENSE`` for more details.
+
+## More infos
 
 http://www.crazyws.fr/dev/classes-php/cwsovhlogsdownloader-pour-telecharger-les-logs-ovh-JPZQ1.html
