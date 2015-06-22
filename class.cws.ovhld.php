@@ -23,344 +23,328 @@
  * 
  * @package CwsOvhLogsDownloader
  * @author Cr@zy
- * @copyright 2013-2014, Cr@zy
+ * @copyright 2013-2015, Cr@zy
  * @license GNU LESSER GENERAL PUBLIC LICENSE
- * @version 1.3
+ * @version 1.4
  * @link https://github.com/crazy-max/CwsOvhLogsDownloader
  *
  */
 
-define('CWSOVHLD_VERBOSE_QUIET',      0);       // means no output at all.
-define('CWSOVHLD_VERBOSE_SIMPLE',     1);       // means only output simple report.
-define('CWSOVHLD_VERBOSE_REPORT',     2);       // means output a detail report.
-define('CWSOVHLD_VERBOSE_DEBUG',      3);       // means output detail report as well as debug info.
-
-define('CWSOVHLD_LOGS_APACHE_WEB',    'web');   // Apache access logs
-define('CWSOVHLD_LOGS_APACHE_ERROR',  'error'); // Apache error logs
-define('CWSOVHLD_LOGS_FTP',           'ftp');   // FTP sessions logs
-define('CWSOVHLD_LOGS_CGI',           'cgi');   // CGI scripts logs
-define('CWSOVHLD_LOGS_OUT',           'out');   // External access logs from the server
-define('CWSOVHLD_LOGS_SSH',           'ssh');   // SSH sessions logs
-
 class CwsOvhLogsDownloader
 {
-    /**
-     * CwsOvhLogsDownloader version.
-     * @var string
-     */
-    public $version = "1.3";
+    const LOGS_WEB = 'web'; // Apache access logs
+    const LOGS_ERROR = 'error'; // Apache error logs
+    const LOGS_FTP = 'ftp'; // FTP sessions logs
+    const LOGS_CGI = 'cgi'; // CGI scripts logs
+    const LOGS_OUT = 'out'; // External access logs from the server
+    const LOGS_SSH = 'ssh'; // SSH sessions logs
     
     /**
      * The OVH NIC-handle. (e.g. AB1234-OVH)
      * More infos : http://guides.ovh.com/NicHandle
      * @var string
      */
-    public $nic;
+    private $nic;
     
     /**
      * The OVH NIC-handle password.
      * @var string
      */
-    public $password;
+    private $password;
     
     /**
      * Your OVH domain (e.g. crazyws.fr).
      * @var string
      */
-    public $domain;
+    private $domain;
     
     /**
      * The download directory.
      * default logs/
      * @var string
      */
-    public $dl_path = "logs/";
+    private $dlPath;
     
     /**
      * Enable download or not.
      * default false
      * @var boolean
      */
-    public $dl_enable = false;
+    private $dlEnable;
     
     /**
      * Enable overwrite of existing logs or not.
      * default false
      * @var boolean
      */
-    public $overwrite = false;
-    
-    /**
-     * The last error message.
-     * @var string
-     */
-    public $error_msg;
-    
-    /**
-     * Control the debug output.
-     * default CWSOVHLD_VERBOSE_QUIET
-     * @var int
-     */
-    public $debug_verbose = CWSOVHLD_VERBOSE_QUIET;
+    private $overwrite;
     
     /**
      * The OVH logs url.
      * @var string
      */
-    private $_url;
+    private $url;
     
     /**
      * The OVH root logs list.
      * @var array
      */
-    private $_rootLogs;
+    private $rootLogs;
     
     /**
-     * Defines new line ending.
+     * The last error message.
+     * @var string
      */
-    private $_newline = "<br />\n";
+    private $error;
     
     /**
-     * Output additional msg for debug.
-     * @param string $msg : if not given, output the last error msg.
-     * @param int $verbose_level : the output level of this message.
-     * @param boolean $newline : insert new line or not.
-     * @param boolean $code : is code or not.
+     * The cws debug instance.
+     * @var CwsDebug
      */
-    private function output($msg=false, $verbose_level=CWSOVHLD_VERBOSE_SIMPLE, $newline=true, $code=false)
+    private $cwsDebug;
+    
+    /**
+     * The cws curl instance.
+     * @var CwsCurl
+     */
+    private $cwsCurl;
+    
+    public function __construct(CwsDebug $cwsDebug, CwsCurl $cwsCurl)
     {
-        if ($this->debug_verbose >= $verbose_level) {
-            if (empty($msg) && !$code) {
-                echo 'ERROR: ' . $this->error_msg;
-            } else {
-                if ($code) {
-                    echo '<textarea style="width:100%;height:300px;">';
-                    print_r($msg);
-                    echo '</textarea>';
-                } else {
-                    echo $msg;
-                }
-            }
-            if ($newline) {
-                echo $this->_newline;
-            }
-        }
+        $this->cwsDebug = $cwsDebug;
+        $this->cwsCurl = $cwsCurl;
+        
+        $this->nic = null;
+        $this->password = null;
+        $this->domain = null;
+        $this->dlPath = 'logs/';
+        $this->dlEnable = false;
+        $this->overwrite = false;
+        $this->url = null;
+        $this->rootLogs = array();
+        $this->error = null;
     }
     
     /**
-     * Retrieve logs by date and type.
-     * @param int $year
-     * @param int $month
-     * @param string $type : default CWSOVHLD_LOGS_APACHE_WEB
+     * Retrieve logs web.
+     * @param int $year (optional)
+     * @param int $month (optional)
      * @return array
      */
-    public function getByDateAndType($year, $month, $type=CWSOVHLD_LOGS_APACHE_WEB)
+    public function getLogsWeb($year = null, $month = null)
     {
-        $this->output('<h2>getByDateAndType</h2>', CWSOVHLD_VERBOSE_SIMPLE, false);
-        $this->output('<strong>Date : </strong>' . $month . '/' . $year, CWSOVHLD_VERBOSE_SIMPLE);
-        $this->output('<strong>Type : </strong>' . $type, CWSOVHLD_VERBOSE_SIMPLE);
-        
-        set_time_limit(0);
-        $result = array(
-            'type'        => $type,
-            'download'    => false,
-            'logs'        => false,
+        return $this->getLogs(self::LOGS_WEB, $year, $month);
+    }
+    
+    /**
+     * Retrieve logs error.
+     * @param int $year (optional)
+     * @param int $month (optional)
+     * @return array
+     */
+    public function getLogsError($year = null, $month = null)
+    {
+        return $this->getLogs(self::LOGS_ERROR, $year, $month);
+    }
+    
+    /**
+     * Retrieve logs ftp.
+     * @param int $year (optional)
+     * @param int $month (optional)
+     * @return array
+     */
+    public function getLogsFtp($year = null, $month = null)
+    {
+        return $this->getLogs(self::LOGS_FTP, $year, $month);
+    }
+    
+    /**
+     * Retrieve logs cgi.
+     * @param int $year (optional)
+     * @param int $month (optional)
+     * @return array
+     */
+    public function getLogsCgi($year = null, $month = null)
+    {
+        return $this->getLogs(self::LOGS_CGI, $year, $month);
+    }
+    
+    /**
+     * Retrieve logs out.
+     * @param int $year (optional)
+     * @param int $month (optional)
+     * @return array
+     */
+    public function getLogsOut($year = null, $month = null)
+    {
+        return $this->getLogs(self::LOGS_OUT, $year, $month);
+    }
+    
+    /**
+     * Retrieve logs ssh.
+     * @param int $year (optional)
+     * @param int $month (optional)
+     * @return array
+     */
+    public function getLogsSsh($year = null, $month = null)
+    {
+        return $this->getLogs(self::LOGS_SSH, $year, $month);
+    }
+    
+    /**
+     * Retrieve all logs types.
+     * @param int $year (optional)
+     * @param int $month (optional)
+     * @return array
+     */
+    public function getAll($year = null, $month = null)
+    {
+        return array(
+            $this->getLogsWeb($year, $month),
+            $this->getLogsError($year, $month),
+            $this->getLogsFtp($year, $month),
+            $this->getLogsCgi($year, $month),
+            $this->getLogsOut($year, $month),
+            $this->getLogsSsh($year, $month),
         );
-        
-        if (!empty($year) && !empty($month)) {
-            $month = strlen($month) == 1 ? "0" . $month : $month;
-            if ($this->_rootLogs == null || !is_array($this->_rootLogs)) {
-                $this->procRootLogs($type);
-            }
-            if (in_array($type . "-" . $month . "-" . $year, $this->_rootLogs)) {
-                $src = $this->getContent("logs-" . $month . "-" . $year . ($type != CWSOVHLD_LOGS_APACHE_WEB ? '/' . $type : ''));
-                $logs = $this->parse($src, '#<a href="' . $this->domain . '-(.*?)">#', ".log.gz");
-                if (!empty($logs)) {
-                    foreach ($logs as $log) {
-                        $result['logs'][$month . "-" . $year][] = $log;
-                    }
-                }
-            } else {
-                $this->error_msg = "No log found...";
-                $this->output();
-                return $result;
-            }
-        } else {
-            $this->error_msg = "Year or month are not valid...";
-            $this->output();
-            return $result;
-        }
-        
-        if (!empty($result) && $this->dl_enable) {
-            $result['download'] = $this->procDownload($result['logs'], $type);
-        }
-        
-        $this->output('<h2>getByDateAndType result</h2>', CWSOVHLD_VERBOSE_DEBUG, false);
-        $this->output($result, CWSOVHLD_VERBOSE_DEBUG, false, true);
-        
-        return $result;
-    }
-    
-    /**
-     * Retrieve logs by date.
-     * @param int $year
-     * @param int $month
-     * @return array
-     */
-    public function getByDate($year, $month)
-    {
-        $result = array();
-    
-        $result[] = $this->getByDateAndType($year, $month, CWSOVHLD_LOGS_APACHE_WEB);
-        $result[] = $this->getByDateAndType($year, $month, CWSOVHLD_LOGS_APACHE_ERROR);
-        $result[] = $this->getByDateAndType($year, $month, CWSOVHLD_LOGS_FTP);
-        $result[] = $this->getByDateAndType($year, $month, CWSOVHLD_LOGS_CGI);
-        $result[] = $this->getByDateAndType($year, $month, CWSOVHLD_LOGS_OUT);
-        $result[] = $this->getByDateAndType($year, $month, CWSOVHLD_LOGS_SSH);
-    
-        return $result;
     }
     
     /**
      * Retrieve logs by type.
-     * @param string $type : default CWSOVHLD_LOGS_APACHE_WEB
+     * @param string $type
+     * @param int $year (optional)
+     * @param int $month (optional)
      * @return array
      */
-    public function getByType($type=CWSOVHLD_LOGS_APACHE_WEB)
+    private function getLogs($type, $year = null, $month = null)
     {
-        $this->output('<h2>getByType</h2>', CWSOVHLD_VERBOSE_SIMPLE, false);
-        $this->output('<strong>Type : </strong>' . $type, CWSOVHLD_VERBOSE_SIMPLE);
+        $this->cwsDebug->titleH2('getLogs');
+        $this->cwsDebug->labelValue('Type', $type);
+        $this->cwsDebug->labelValue('Date', $month . '/' . $year);
         
-        set_time_limit(0);
         $result = array(
-            'type'        => $type,
-            'download'    => false,
-            'logs'        => false,
+            'type' => $type,
+            'download' => false,
+            'logs' => false,
         );
         
-        $dl_esc = true;
-        if ($this->dl_enable) {
-            $dl_esc = false;
+        $byDate = !empty($year) && !empty($month);
+        if ((empty($year) && !empty($month)) || (!empty($year) && empty($month))) {
+            $this->error = 'Year or month are not valid...';
+            $this->cwsDebug->error($this->error);
+            return $result;
+        } elseif ($byDate) {
+            $month = strlen($month) == 1 ? '0' . $month : $month;
         }
         
-        $this->procRootLogs($type);
-        foreach ($this->_rootLogs as $date) {
-            $exDate = explode("-", $date);
-            $year = $exDate[2];
-            $month = $exDate[1];
-            $files = $this->getByDateAndType($year, $month, $type);
-            if ($files !== false) {
-                $result['logs'][$month . "-" . $year] = $files['logs'][$month . "-" . $year];
+        set_time_limit(0);
+        
+        if ($this->rootLogs == null || !is_array($this->rootLogs)) {
+            $this->procRootLogs($type);
+        }
+        
+        foreach ($this->rootLogs as $date) {
+            $exDate = explode('-', $date);
+            $aYear = $exDate[2];
+            $aMonth = $exDate[1];
+            
+            if ($byDate && ($year != $aYear || $month != $aMonth)) {
+                continue;
+            } elseif (in_array($type . '-' . $aMonth . '-' . $aYear, $this->rootLogs)) {
+                $src = $this->getContent('logs-' . $aMonth . '-' . $aYear . ($type != self::LOGS_WEB ? '/' . $type : ''));
+                $logs = $this->parse($src, '#<a href="' . $this->domain . '-(.*?)">#', '.log.gz');
+                if (!empty($logs)) {
+                    foreach ($logs as $log) {
+                        $result['logs'][$aMonth . '-' . $aYear][] = $log;
+                    }
+                }
             }
         }
         
-        $this->dl_enable = !$dl_esc;
-        if (!empty($result['logs']) && $this->dl_enable) {
+        if (!empty($result['logs']) && $this->dlEnable) {
             $result['download'] = $this->procDownload($result['logs'], $type);
-        } else {
-            $this->error_msg = "No log found...";
-            $this->output();
+        } elseif (empty($result['logs'])) {
+            $this->error = 'No log found...';
+            $this->cwsDebug->error($this->error);
             return $result;
         }
         
-        $this->output('<h2>getByType result</h2>', CWSOVHLD_VERBOSE_DEBUG, false);
-        $this->output($result, CWSOVHLD_VERBOSE_DEBUG, false, true);
-        
-        return $result;
-    }
-    
-    /**
-     * Retrieve all logs.
-     * @return array
-     */
-    public function getAll()
-    {
-        $result = array();
-    
-        $result[] = $this->getByType(CWSOVHLD_LOGS_APACHE_WEB);
-        $result[] = $this->getByType(CWSOVHLD_LOGS_APACHE_ERROR);
-        $result[] = $this->getByType(CWSOVHLD_LOGS_FTP);
-        $result[] = $this->getByType(CWSOVHLD_LOGS_CGI);
-        $result[] = $this->getByType(CWSOVHLD_LOGS_OUT);
-        $result[] = $this->getByType(CWSOVHLD_LOGS_SSH);
-    
+        $this->cwsDebug->titleH2('Final result');
+        $this->cwsDebug->dump('result', $result);
         return $result;
     }
     
     /**
      * Retrieve root logs available from the main domain page.
-     * @param string $type : default CWSOVHLD_LOGS_APACHE_WEB
+     * @param string $type
      */
-    private function procRootLogs($type=CWSOVHLD_LOGS_APACHE_WEB)
+    private function procRootLogs($type)
     {
-        $this->output('<h2>procRootLogs</h2>', CWSOVHLD_VERBOSE_DEBUG, false);
+        $this->cwsDebug->titleH3('procRootLogs', CwsDebug::VERBOSE_REPORT);
+        $this->rootLogs = array();
         
-        set_time_limit(0);
-        $this->_rootLogs = array();
-    
         if (!empty($this->nic) && !empty($this->password) && !empty($this->domain)) {
-            $this->_url = "https://logs.ovh.net/" . $this->domain;
-    
+            $this->url = 'https://logs.ovh.net/' . $this->domain;
+            
             $src = $this->getContent();
-            $links = $this->parse($src, '#<a href="(.*?)">' . $type . '</a>#', "logs-");
+            $links = $this->parse($src, '#<a href="(.*?)">' . $type . '</a>#', 'logs-');
             if (!empty($links)) {
                 foreach ($links as $link) {
                     $link = substr($link, 0, 12);
-                    $explode = explode("-", $link);
+                    $explode = explode('-', $link);
                     $year = $explode[2];
                     $month = $explode[1];
-                    $this->_rootLogs[] = $type . "-" . $month . "-" . $year;
+                    $this->rootLogs[] = $type . '-' . $month . '-' . $year;
                 }
             }
         }
         
-        if (empty($this->_rootLogs)) {
-            $this->error_msg = "Root logs empty... Please check your OVH nic/password/domain.";
-            $this->output();
+        if (empty($this->rootLogs)) {
+            $this->error = 'Root logs empty... Please check your OVH nic/password/domain.';
+            $this->cwsDebug->error($this->error);
             exit();
         }
         
-        $this->output('<h3>procRootLogs result</h3>', CWSOVHLD_VERBOSE_DEBUG, false);
-        $this->output($this->_rootLogs, CWSOVHLD_VERBOSE_DEBUG, false, true);
+        $this->cwsDebug->dump('result', $this->rootLogs, CwsDebug::VERBOSE_REPORT);
     }
     
     /**
      * Process download of available logs.
      * @param array $resultLogs
-     * @param string $type : default CWSOVHLD_LOGS_APACHE_WEB
+     * @param string $type
      * @return array
      */
     private function procDownload($resultLogs, $type)
     {
-        $this->output('<h2>procDownload</h2>', CWSOVHLD_VERBOSE_REPORT, false);
+        $this->cwsDebug->titleH3('procDownload', CwsDebug::VERBOSE_REPORT);
         
         $result = array(
-            'count'    => 0,
-            'size'     => 0,
-            'time'     => 0,
+            'count' => 0,
+            'size' => 0,
+            'time' => 0,
         );
         
-        if (empty($this->dl_path)) {
-            $this->error_msg = '<strong>dl_path</strong> is required!';
-            $this->output();
+        if (empty($this->dlPath)) {
+            $this->error = '<strong>dlPath</strong> is required!';
+            $this->cwsDebug->error($this->error);
             return;
         }
         
         $result['time'] = $this->getMicrotime();
         
         foreach ($resultLogs as $date => $logs) {
-            $exDate = explode("-", $date);
+            $exDate = explode('-', $date);
             $year = $exDate[1];
             $month = $exDate[0];
             
-            $path = $this->endWith($this->dl_path, '/') ? $this->dl_path : $this->dl_path . '/';
+            $path = $this->endWith($this->dlPath, '/') ? $this->dlPath : $this->dlPath . '/';
             $path = $path . $year . '/' . $month;
             if (!file_exists($path)) {
                 mkdir($path, 0, true);
             }
             
             foreach ($logs as $log) {
-                $exDate = explode("-", $log);
+                $exDate = explode('-', $log);
                 $day = $exDate[0];
                 
                 $content = $this->getContent('logs-' . $month . '-' . $year . '/' . $this->domain . '-' . $day . '-' . $month . '-' . $year . '.log.gz');
@@ -380,11 +364,7 @@ class CwsOvhLogsDownloader
         $result['size'] = $this->formatSize($result['size']);
         $result['time'] = round($this->getMicrotime() - $result['time'], 3);
         
-        $this->output('<h3>procDownload result</h3>', CWSOVHLD_VERBOSE_REPORT, false);
-        $this->output('<strong>Downloaded : </strong>' . $result['count'], CWSOVHLD_VERBOSE_REPORT);
-        $this->output('<strong>Size : </strong>' . $result['size'], CWSOVHLD_VERBOSE_REPORT);
-        $this->output('<strong>Time : </strong>' . $result['time'] . ' seconds', CWSOVHLD_VERBOSE_REPORT);
-        
+        $this->cwsDebug->dump('result', $result, CwsDebug::VERBOSE_REPORT);
         return $result;
     }
     
@@ -394,30 +374,30 @@ class CwsOvhLogsDownloader
      * @param string $params
      * @return string
      */
-    private function getContent($params='')
+    private function getContent($params = '')
     {
-        $this->output('<h3>getContent</h3>', CWSOVHLD_VERBOSE_DEBUG, false);
+        $this->cwsDebug->titleH3('getContent', CwsDebug::VERBOSE_DEBUG);
         
-        $url = $this->_url . '/' . $params;
-        $this->output('<strong>Url : </strong>' . $url, CWSOVHLD_VERBOSE_DEBUG);
+        $url = $this->url . '/' . $params;
+        $this->cwsDebug->labelValue('Url', $url, CwsDebug::VERBOSE_DEBUG);
         
         $time = $this->getMicrotime();
         
-        $cwsCurl = new CwsCurl();
-        $cwsCurl->setUrl($url);
-        $cwsCurl->setAuth($this->nic, $this->password);
-        $cwsCurl->process();
+        $this->cwsCurl->reset();
+        $this->cwsCurl->setUrl($url);
+        $this->cwsCurl->setAuth($this->nic, $this->password);
+        $this->cwsCurl->process();
         
-        $this->output('<strong>Size : </strong>' . $this->formatSize(strlen($cwsCurl->getContent())), CWSOVHLD_VERBOSE_DEBUG);
-        $this->output('<strong>Time : </strong>' . round($this->getMicrotime() - $time, 3) . ' seconds', CWSOVHLD_VERBOSE_DEBUG);
+        $this->cwsDebug->labelValue('Size', $this->formatSize(strlen($this->cwsCurl->getContent())), CwsDebug::VERBOSE_DEBUG);
+        $this->cwsDebug->labelValue('Time', round($this->getMicrotime() - $time, 3) . ' seconds', CwsDebug::VERBOSE_DEBUG);
         
-        if ($cwsCurl->getErrorMsg()) {
-            $this->error_msg = $cwsCurl->getErrorMsg();
-            $this->output();
+        if ($this->cwsCurl->getError()) {
+            $this->error = $this->cwsCurl->getError();
+            $this->cwsDebug->error($this->error);
             return false;
         }
         
-        return $cwsCurl->getContent();
+        return $this->cwsCurl->getContent();
     }
     
     /**
@@ -465,11 +445,11 @@ class CwsOvhLogsDownloader
     private static function formatSize($size)
     {
         if ($size >= 1073741824) {
-            $size = round($size / 1073741824 * 100) / 100 . "Go";
+            $size = round($size / 1073741824 * 100) / 100 . 'Go';
         } elseif ($size >= 1048576) {
-            $size = round($size / 1048576 * 100) / 100 . "Mo";
+            $size = round($size / 1048576 * 100) / 100 . 'Mo';
         } else {
-            $size = round($size / 1024 * 100) / 100 . "Ko";
+            $size = round($size / 1024 * 100) / 100 . 'Ko';
         }
         
         return $size;
@@ -477,9 +457,107 @@ class CwsOvhLogsDownloader
     
     private static function getMicrotime()
     {
-        list($usec, $sec) = explode(" ", microtime());
+        list($usec, $sec) = explode(' ', microtime());
         return ((float) $usec + (float) $sec);
     }
-}
+    
+    /**
+     * Set the OVH NIC-handle. (e.g. AB1234-OVH)
+     * More infos : http://guides.ovh.com/NicHandle
+     * @param string $nic
+     */
+    public function setNic($nic)
+    {
+        $this->nic = $nic;
+    }
 
-?>
+    /**
+     * Set the OVH NIC-handle password.
+     * @param string $password
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+
+    /**
+     * Your OVH domain
+     * @return the $domain
+     */
+    public function getDomain()
+    {
+        return $this->domain;
+    }
+
+    /**
+     * Set the OVH domain (e.g. crazyws.fr).
+     * @param string $domain
+     */
+    public function setDomain($domain)
+    {
+        $this->domain = $domain;
+    }
+
+    /**
+     * The download directory.
+     * @return the $dlPath
+     */
+    public function getDlPath()
+    {
+        return $this->dlPath;
+    }
+
+    /**
+     * Set the download directory.
+     * @param string $dlPath
+     */
+    public function setDlPath($dlPath)
+    {
+        $this->dlPath = $dlPath;
+    }
+
+    /**
+     * Is downloading enable.
+     * @return the $dlEnable
+     */
+    public function isDlEnable()
+    {
+        return $this->dlEnable;
+    }
+
+    /**
+     * Set download activation
+     * @param boolean $dlEnable
+     */
+    public function setDlEnable($dlEnable)
+    {
+        $this->dlEnable = $dlEnable;
+    }
+
+    /**
+     * Is overwriting enable.
+     * @return the $overwrite
+     */
+    public function isOverwrite()
+    {
+        return $this->overwrite;
+    }
+
+    /**
+     * Set overwrite of existing logs
+     * @param boolean $overwrite
+     */
+    public function setOverwrite($overwrite)
+    {
+        $this->overwrite = $overwrite;
+    }
+
+    /**
+     * The last error.
+     * @return the $error
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+}

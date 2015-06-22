@@ -5,31 +5,38 @@ CwsOvhLogsDownloader is a PHP class to download the Apache access and error, FTP
 ## Installation
 
 * Enable the [php_curl](http://php.net/manual/en/book.curl.php) extension.
-* Download and copy the [CwsCurl](https://github.com/crazy-max/CwsCurl) wrapper PHP class.
+* Download [CwsDump](https://github.com/crazy-max/CwsDump), [CwsDebug](https://github.com/crazy-max/CwsDebug) and [CwsCurl](https://github.com/crazy-max/CwsCurl).
 * Copy the ``class.cws.ovhld.php`` file in a folder on your server.
-* Go to ``index.php`` to see an example.
 
-![](http://static.crazyws.fr/resources/blog/2013/05/ovh-logs-downloader-php.png)
+## Getting started
 
-## Options
+See ``example.php`` file sample to help you.
 
-Public vars :
+## Example
 
-* **nic** - The OVH NIC-handle. (e.g. AB1234-OVH)
-* **password** - The OVH NIC-handle password.
-* **domain** - Your OVH domain (e.g. crazyws.fr).
-* **dl_path** - The download directory.
-* **dl_enable** - Enable download or not.
-* **overwrite** - Enable overwrite of existing logs or not.
-* **error_msg** - The last error message.
-* **debug_verbose** - Control the debug output.
+![](https://raw.github.com/crazy-max/CwsOvhLogsDownloader/master/example.png)
 
-Public methods :
+## Methods
 
-* **getByDateAndType** - Retrieve logs by date and type.
-* **getByDate** - Retrieve logs by date.
-* **getByType** - Retrieve logs by type.
-* **getAll** - Retrieve all logs.
+**getLogsWeb** - Retrieve logs web.<br />
+**getLogsError** - Retrieve logs error.<br />
+**getLogsFtp** - Retrieve logs ftp.<br />
+**getLogsCgi** - Retrieve logs cgi.<br />
+**getLogsOut** - Retrieve logs out.<br />
+**getLogsSsh** - Retrieve logs ssh.<br />
+**getAll** - Retrieve all logs types.<br />
+
+**setNic** - Set the OVH NIC-handle. (e.g. AB1234-OVH).<br />
+**setPassword** - Set the OVH NIC-handle password.<br />
+**getDomain** - Your OVH domain.<br />
+**setDomain** - Set the OVH domain (e.g. crazyws.fr).<br />
+**getDlPath** - The download directory.<br />
+**setDlPath** - Set the download directory. (default 'logs/')<br />
+**isDlEnable** - Is downloading enable.<br />
+**setDlEnable** - Set download activation. (default false)<br />
+**isOverwrite** - Is overwriting enable.<br />
+**setOverwrite** - Set overwrite activation. (default false)<br />
+**getError** - Get the last error.
 
 ## License
 
