@@ -2,7 +2,7 @@
   "name": "crazy-max/cws-ovh-logs-downloader",
   "type":  "library",
   "description": "PHP class to download the Apache access and error, FTP, CGI, Out and SSH logs available on http://logs.ovh.net from a shared hosting.",
-  "keywords": ["session", "database", "encrypt"],
+  "keywords": ["ovh", "hosting", "logs", "apache", "ftp", "cgi", "ssh"],
   "homepage": "https://github.com/crazy-max/CwsOvhLogsDownloader",
   "license": "LGPL",
   "authors": [
