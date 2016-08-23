@@ -1,22 +1,14 @@
 <?php
 
-// Download CwsDump at https://github.com/crazy-max/CwsDump
-require_once '../CwsDump/class.cws.dump.php';
-$cwsDump = new CwsDump();
+require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Composer autoload
 
-// Download CwsDebug at https://github.com/crazy-max/CwsDebug
-require_once '../CwsDebug/class.cws.debug.php';
-$cwsDebug = new CwsDebug($cwsDump);
-$cwsDebug->setReportVerbose();
+$cwsDebug = new Cws\CwsDebug();
+$cwsDebug->setDebugVerbose();
 $cwsDebug->setEchoMode();
 
-// Download CwsCurl at https://github.com/crazy-max/CwsCurl
-require_once '../CwsCurl/class.cws.curl.php';
-$cwsCurl = new CwsCurl(new CwsDebug($cwsDump));
+$cwsCurl = new Cws\CwsCurl(new Cws\CwsDebug());
 
-require_once 'class.cws.ovhld.php';
-
-$cwsOvhLogsDownloader = new CwsOvhLogsDownloader($cwsDebug, $cwsCurl);
+$cwsOvhLogsDownloader = new Cws\CwsOvhLogsDownloader($cwsDebug, $cwsCurl);
 $cwsOvhLogsDownloader->setNic(''); // The OVH NIC-handle (e.g. AB1234-OVH)
 $cwsOvhLogsDownloader->setPassword(''); // The OVH NIC-handle password
 $cwsOvhLogsDownloader->setDomain(''); // Your OVH domain (e.g. crazyws.fr)

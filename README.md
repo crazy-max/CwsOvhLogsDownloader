@@ -1,16 +1,33 @@
+[![Latest Stable Version](https://img.shields.io/packagist/v/crazy-max/cws-ovh-logs-downloader.svg?style=flat-square)](https://packagist.org/packages/crazy-max/cws-ovh-logs-downloader)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.3.0-8892BF.svg?style=flat-square)](https://php.net/)
+[![Build Status](https://img.shields.io/travis/crazy-max/CwsOvhLogsDownloader/master.svg?style=flat-square)](https://travis-ci.org/crazy-max/CwsOvhLogsDownloader)
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/crazy-max/CwsOvhLogsDownloader.svg?style=flat-square)](https://scrutinizer-ci.com/g/crazy-max/CwsOvhLogsDownloader)
+
 # CwsOvhLogsDownloader
 
-CwsOvhLogsDownloader is a PHP class to download the Apache access and error, FTP, CGI, Out and SSH logs available on http://logs.ovh.net from a shared hosting.
+PHP class to download the Apache access and error, FTP, CGI, Out and SSH logs available on http://logs.ovh.net from a shared hosting.
 
-## Installation
+## Requirements
 
+* PHP >= 5.3.0
+* CwsCurl >= 1.8
 * Enable the [php_curl](http://php.net/manual/en/book.curl.php) extension.
-* Download [CwsDump](https://github.com/crazy-max/CwsDump), [CwsDebug](https://github.com/crazy-max/CwsDebug) and [CwsCurl](https://github.com/crazy-max/CwsCurl).
-* Copy the ``class.cws.ovhld.php`` file in a folder on your server.
+
+## Installation with Composer
+
+```bash
+composer require crazy-max/cws-ovh-logs-downloader
+```
+
+And download the code:
+
+```bash
+composer install # or update
+```
 
 ## Getting started
 
-See ``example.php`` file sample to help you.
+See `tests/test.php` file sample to help you.
 
 ## Example
 
