@@ -1,7 +1,8 @@
 [![Latest Stable Version](https://img.shields.io/packagist/v/crazy-max/cws-ovh-logs-downloader.svg?style=flat-square)](https://packagist.org/packages/crazy-max/cws-ovh-logs-downloader)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.3.0-8892BF.svg?style=flat-square)](https://php.net/)
 [![Build Status](https://img.shields.io/travis/crazy-max/CwsOvhLogsDownloader/master.svg?style=flat-square)](https://travis-ci.org/crazy-max/CwsOvhLogsDownloader)
-[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/crazy-max/CwsOvhLogsDownloader.svg?style=flat-square)](https://scrutinizer-ci.com/g/crazy-max/CwsOvhLogsDownloader)
+[![Code Quality](https://img.shields.io/codacy/grade/6ca828770e69476fa3d7773f831eec36.svg?style=flat-square)](https://www.codacy.com/app/crazy-max/CwsOvhLogsDownloader)
+[![StyleCI](https://styleci.io/repos/9979083/shield?style=flat-square)](https://styleci.io/repos/9979083)
 [![Gemnasium](https://img.shields.io/gemnasium/crazy-max/CwsOvhLogsDownloader.svg?style=flat-square)](https://gemnasium.com/github.com/crazy-max/CwsOvhLogsDownloader)
 
 # CwsOvhLogsDownloader
