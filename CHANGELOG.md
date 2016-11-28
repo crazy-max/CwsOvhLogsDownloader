@@ -4,6 +4,7 @@
 
 * Add StyleCI config
 * Fix short syntax for arrays
+* Update dependencies
 
 ## 1.5 (2016/08/23)
 
