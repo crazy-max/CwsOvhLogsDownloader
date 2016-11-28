@@ -113,7 +113,7 @@ class CwsOvhLogsDownloader
         $this->dlEnable = false;
         $this->overwrite = false;
         $this->url = null;
-        $this->rootLogs = [];
+        $this->rootLogs = array();
         $this->error = null;
     }
 
@@ -205,14 +205,14 @@ class CwsOvhLogsDownloader
      */
     public function getAll($year = null, $month = null)
     {
-        return [
+        return array(
             $this->getLogsWeb($year, $month),
             $this->getLogsError($year, $month),
             $this->getLogsFtp($year, $month),
             $this->getLogsCgi($year, $month),
             $this->getLogsOut($year, $month),
             $this->getLogsSsh($year, $month),
-        ];
+        );
     }
 
     /**
@@ -230,11 +230,11 @@ class CwsOvhLogsDownloader
         $this->cwsDebug->labelValue('Type', $type);
         $this->cwsDebug->labelValue('Date', $month.'/'.$year);
 
-        $result = [
+        $result = array(
             'type'     => $type,
             'download' => false,
             'logs'     => false,
-        ];
+        );
 
         $byDate = !empty($year) && !empty($month);
         if ((empty($year) && !empty($month)) || (!empty($year) && empty($month))) {
@@ -293,7 +293,7 @@ class CwsOvhLogsDownloader
     private function procRootLogs($type)
     {
         $this->cwsDebug->titleH3('procRootLogs', CwsDebug::VERBOSE_REPORT);
-        $this->rootLogs = [];
+        $this->rootLogs = array();
 
         if (!empty($this->nic) && !empty($this->password) && !empty($this->domain)) {
             $this->url = 'https://logs.ovh.net/'.$this->domain;
@@ -332,11 +332,11 @@ class CwsOvhLogsDownloader
     {
         $this->cwsDebug->titleH3('procDownload', CwsDebug::VERBOSE_REPORT);
 
-        $result = [
+        $result = array(
             'count' => 0,
             'size'  => 0,
             'time'  => 0,
-        ];
+        );
 
         if (empty($this->dlPath)) {
             $this->error = '<strong>dlPath</strong> is required!';
@@ -430,7 +430,7 @@ class CwsOvhLogsDownloader
      */
     private function parse($src, $regexp, $contain)
     {
-        $result = [];
+        $result = array();
 
         preg_match_all($regexp, $src, $matches);
         if (!empty($matches)) {
