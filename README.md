@@ -4,18 +4,13 @@
 [![Code Quality](https://img.shields.io/codacy/grade/6ca828770e69476fa3d7773f831eec36.svg?style=flat-square)](https://www.codacy.com/app/crazy-max/CwsOvhLogsDownloader)
 [![StyleCI](https://styleci.io/repos/9979083/shield?style=flat-square)](https://styleci.io/repos/9979083)
 [![Gemnasium](https://img.shields.io/gemnasium/crazy-max/CwsOvhLogsDownloader.svg?style=flat-square)](https://gemnasium.com/github.com/crazy-max/CwsOvhLogsDownloader)
+[![Donate Paypal](https://img.shields.io/badge/donate-paypal-7057ff.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U2NGLLF484NX4)
 
-# CwsOvhLogsDownloader
+## About
 
 PHP class to download the Apache access and error, FTP, CGI, Out and SSH logs available on http://logs.ovh.net from a shared hosting.
 
-## Requirements
-
-* PHP >= 5.3.0
-* CwsCurl >= 1.8
-* Enable the [php_curl](http://php.net/manual/en/book.curl.php) extension.
-
-## Installation with Composer
+## Installation
 
 ```bash
 composer require crazy-max/cws-ovh-logs-downloader
@@ -33,7 +28,7 @@ See `tests/test.php` file sample to help you.
 
 ## Example
 
-![](https://raw.github.com/crazy-max/CwsOvhLogsDownloader/master/example.png)
+![](.res/example.png)
 
 ## Methods
 
@@ -57,10 +52,14 @@ See `tests/test.php` file sample to help you.
 **setOverwrite** - Set overwrite activation. (default false)<br />
 **getError** - Get the last error.
 
+## How can i help ?
+
+We welcome all kinds of contributions :raised_hands:!<br />
+The most basic way to show your support is to star :star2: the project, or to raise issues :speech_balloon:<br />
+Any funds donated will be used to help further development on this project! :gift_heart:
+
+[![Donate Paypal](.res/paypal.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U2NGLLF484NX4)
+
 ## License
 
-LGPL. See ``LICENSE`` for more details.
-
-## More infos
-
-http://www.crazyws.fr/dev/classes-php/cwsovhlogsdownloader-pour-telecharger-les-logs-ovh-JPZQ1.html
+MIT. See `LICENSE` for more details.
