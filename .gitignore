@@ -1,3 +1,7 @@
-/.idea/
-/vendor/
-/tests/logs/
+# Intellij
+/.idea
+/*.iml
+
+# Project
+/vendor
+/tests/logs
