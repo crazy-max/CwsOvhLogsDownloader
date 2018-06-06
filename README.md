@@ -4,7 +4,6 @@
 [![Code Quality](https://img.shields.io/codacy/grade/6ca828770e69476fa3d7773f831eec36.svg?style=flat-square)](https://www.codacy.com/app/crazy-max/CwsOvhLogsDownloader)
 [![StyleCI](https://styleci.io/repos/9979083/shield?style=flat-square)](https://styleci.io/repos/9979083)
 [![Libraries.io](https://img.shields.io/librariesio/github/crazy-max/CwsOvhLogsDownloader.svg?style=flat-square)](https://libraries.io/github/crazy-max/CwsOvhLogsDownloader)
-[![Beerpay](https://img.shields.io/beerpay/crazy-max/CwsOvhLogsDownloader.svg?style=flat-square)](https://beerpay.io/crazy-max/CwsOvhLogsDownloader)
 [![Donate Paypal](https://img.shields.io/badge/donate-paypal-7057ff.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U2NGLLF484NX4)
 
 ## About
@@ -59,8 +58,7 @@ All kinds of contributions are welcomed :raised_hands:!<br />
 The most basic way to show your support is to star :star2: the project, or to raise issues :speech_balloon:<br />
 But we're not gonna lie to each other, I'd rather you buy me a beer or two :beers:!
 
-[![Beerpay](https://beerpay.io/crazy-max/CwsOvhLogsDownloader/badge.svg?style=beer-square)](https://beerpay.io/crazy-max/CwsOvhLogsDownloader)
-or [![Paypal](.res/paypal.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U2NGLLF484NX4)
+[![Paypal](.res/paypal.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U2NGLLF484NX4)
 
 ## License
 
